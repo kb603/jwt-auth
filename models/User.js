@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcrypt";
 
 const { isEmail } = validator;
 
@@ -19,7 +20,9 @@ const userSchema = new mongoose.Schema({
 });
 
 // function after docc is saved to db
-userSchema.post("save", function (doc, next) {
+userSchema.post("save", async function (doc, next) {
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
   console.log("New user created and saved:", doc);
   next();
 });
