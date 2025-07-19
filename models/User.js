@@ -20,10 +20,11 @@ const userSchema = new mongoose.Schema({
 });
 
 // function after docc is saved to db
-userSchema.post("save", async function (doc, next) {
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next(); // Prevent rehashing on update
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  console.log("New user created and saved:", doc);
   next();
 });
 
