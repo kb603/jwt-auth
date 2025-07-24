@@ -48,9 +48,15 @@ export function getLoginRoute(req, res) {
   res.render("login");
 }
 
-export function postLoginRoute(req, res) {
+export async function postLoginRoute(req, res) {
   const { email, password } = req.body;
-  console.log(email, password);
 
-  res.send("user login");
+  try {
+    const user = await User.login(email, password);
+    res.status(200).json({ user: user._id });
+  } catch (error) {
+    res.status(400).json({});
+  }
 }
+
+// test@user.com password
